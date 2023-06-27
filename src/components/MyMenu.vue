@@ -1,58 +1,108 @@
-<!--
- * @Description: 菜单组件，用于首页商品展示模块的右上角菜单
- -->
 <template>
-  <div class="myMenu" id="myMenu">
-    <ul>
-      <li
-        v-for="item in val"
-        :key="item"
-        :class="activeClass == item ? 'active':''"
-        @mouseover="mouseover($event,item)"
+  <div class="footer-menu" v-if="isMobile">
+    <el-row :gutter="0" style="height: 60px;">
+      <el-col
+        v-for="(item, index) in menuList"
+        :key="index"
+        :span="8"
       >
-        <router-link to>
-          <slot :name="item"></slot>
-        </router-link>
-      </li>
-    </ul>
+        <div @click="jump_to(item.path)" :class="item.path === $route.path ? 'active' : ''">
+          <i :class="'el-icon-' + item.icon"></i>
+          <span>{{ item.title }}</span>
+        </div>
+      </el-col>
+    </el-row>
   </div>
 </template>
+
 <script>
-export default {
-  props: ["val"],
-  name: "MyMenu",
-  data() {
-    return {
-      activeClass: 1
-    };
-  },
-  methods: {
-    // 通过mouseover事件控制当前显示的商品分类，1为该类别的热门商品
-    mouseover(e, val) {
-      this.activeClass = val;
-    }
-  },
-  watch: {
-    // 向父组件传过去当前要显示的商品分类，从而更新商品列表
-    activeClass: function(val) {
-      this.$emit("fromChild", val);
-    }
-  }
-};
+  export default {
+    data() {
+      return {
+        isMobile: true, // 是否为移动设备
+        menuList: [ // 移动端菜单
+          {
+            title: '商品',
+            path: '/goods',
+            // icon: 's-goods', // Element UI 图标名称
+          },
+          {
+            title: '购物车',
+            path: '/cart',
+            // icon: 's-list',
+          },
+          {
+            title: '我的订单',
+            path: '/orders',
+            // icon: 'el-icon-tickts',
+          }
+        ],
+      };
+    },
+    mounted() {
+      this.checkIsMobile();
+      window.addEventListener('resize', this.checkIsMobile);
+    },
+    beforeDestroy() {
+      window.removeEventListener('resize', this.checkIsMobile);
+    },
+    methods: {
+      // 检测是否为移动设备
+      checkIsMobile() {
+        this.isMobile = window.innerWidth < 10000;
+      },
+      jump_to(path) {
+        console.log('-------- jump to  ', path)
+        this.$router.push({ path })
+      }
+    },
+  };
 </script>
+
 <style scoped>
-#myMenu li {
-  float: left;
-  margin-left: 30px;
+/* 移动端底部菜单样式 */
+.footer-menu {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  background-color: #000;
+  color: #fff;
 }
 
-#myMenu a:hover {
-  color: #ff6700;
-  border-bottom: 2px solid #ff6700;
+.footer-menu .el-row {
+  height: 100%;
+  padding: 10px;
 }
 
-#myMenu .active a {
-  color: #ff6700;
-  border-bottom: 2px solid #ff6700;
+.footer-menu .el-row .el-col {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer-menu .el-row .el-col div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.footer-menu .el-row .el-col div i {
+  font-size: 20px;
+  margin-bottom: 3px;
+}
+
+.footer-menu .el-row .el-col div span {
+  font-size: 12px;
+}
+
+.footer-menu .el-row .el-col div.active {
+  color: #f00;
+}
+
+.footer-menu .el-row .el-col div.active i {
+  color: #f00;
 }
 </style>

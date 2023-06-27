@@ -4,8 +4,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import user from './modules/user'
-import shoppingCart from './modules/shoppingCart'
+import user from './sub_models/user'
+import shoppingCart from './sub_models/shoppingCart'
 
 Vue.use(Vuex)
 

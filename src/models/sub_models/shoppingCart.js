@@ -4,7 +4,7 @@
 export default {
   state: {
     shoppingCart: []
-    // shoppingCart结构
+    // shoppingCartItems 结构体
     /* 
     shoppingCart = {
       id: "", // 购物车id
