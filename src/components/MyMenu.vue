@@ -52,9 +52,9 @@
         this.isMobile = window.innerWidth < 10000;
       },
       jump_to(path) {
-        console.log('-------- jump to  ', path)
+        // console.log('-------- jump to  ', path)
         this.$router.push({ path })
-      }
+      },
     },
   };
 </script>

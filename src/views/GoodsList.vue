@@ -32,23 +32,26 @@ export default {
         this.total = res.data.total;
       })
       .catch(error => {
-        console.log("errorrrr:::: ", error);
+        error
+        // console.log("errorrrr:::: ", error);
       });
   },
   methods: {
     addToCart(item) {
       // 将商品添加到购物车中
-      console.log('-------- add to cart:', item)
+      // console.log('-------- add to cart:', item)
       const params = { goods_id: item.id, amount: 1, user_id: 10000 }
       this.$axios.post('/appapi/cart/add',params)
         .then(res => {
+          res
           // this.goodsList = res.data.list;
           // this.total = res.data.total;
-          console.log('------------ this: ', res.data)
+          // console.log('------------ this: ', res.data)
           this.$message.success('添加成功')
         })
         .catch(error => {
-          console.log("errorrrr:::: ", error);
+          error
+          // console.log("errorrrr:::: ", error);
         });
       },
   },

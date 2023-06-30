@@ -29,18 +29,19 @@ export default {
   },
   mounted() {
     // this.methods.handleSearch()
-    console.log("aaaa")
+    // console.log("aaaa")
     const params = { user_id: 10000 }
     this.$axios.get('/appapi/cart/list',params )
       .then(res => {
-        console.log("------------66---------- res:::", res)
+        // console.log("------------66---------- res:::", res)
         this.cartList = res.data.list;
         this.cartItemNumber = res.data.list.length
         this.cartTotalPrice = 8888
         // this.total = res.data.total;
       })
       .catch(error => {
-        console.log("errorrrr:::: ", error);
+        error
+        // console.log("errorrrr:::: ", error);
       });
   },
   methods: {
@@ -84,11 +85,14 @@ export default {
         .then(res => {
           // this.goodsList = res.data.list;
           // this.total = res.data.total;
-          console.log('------------ order/new: ', res.data)
+          res
+          // console.log('------------ order/new: ', res.data)
           this.$message.success('下单成功')
         })
         .catch(error => {
-          console.log("errorrrr:::: ", error);
+          error
+          // console.log("errorrrr:::: ", error);
+
         });
     }
   }
