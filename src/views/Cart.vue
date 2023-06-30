@@ -2,18 +2,18 @@
   <div>
     <el-button @click="showCartDialog">总计： {{ cartItemNumber }} 件商品 | ¥ {{ cartTotalPrice }}</el-button>
     <!-- <el-dialog :title="'购物车（'+cartItemNumber+'件）'" :visible.sync="cartDialogVisible" width="100%"> -->
-      <el-table :data="cartList" style="width: 100%">
+      <el-table :data="cartList" key="slot" style="width: 100%">
         <el-table-column prop="name" label="商品名称"></el-table-column>
         <el-table-column prop="price" label="单价"></el-table-column>
         <el-table-column prop="quantity" label="数量"></el-table-column>
         <el-table-column label="操作">
-          <template slot-scope="{ row }">
-            <el-button type="danger" size="small" @click="removeItem(row)">删除</el-button>
+          <template  slot-scope="{ row }">
+            <el-button type="danger" size="small" @click="removeItem( row )">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
     <!-- </el-dialog> -->
-    <el-button type="primary" class="float-right" @click="careateOrder">去下单</el-button>
+    <el-button type="primary" class="float-right" @click="careateOrder(data)">去下单</el-button>
   </div>
 </template>
 
@@ -27,21 +27,20 @@ export default {
       cartDialogVisible: true, // 购物车对话框是否可见
     };
   },
-  mounted() {
+  activated() {
     // this.methods.handleSearch()
     // console.log("aaaa")
     const params = { user_id: 10000 }
     this.$axios.get('/appapi/cart/list',params )
       .then(res => {
-        // console.log("------------66---------- res:::", res)
+        console.log("------------66---------- res.data.list:::", res.data.list)
         this.cartList = res.data.list;
         this.cartItemNumber = res.data.list.length
         this.cartTotalPrice = 8888
         // this.total = res.data.total;
       })
       .catch(error => {
-        error
-        // console.log("errorrrr:::: ", error);
+        console.error("errorrrr:::: ", error);
       });
   },
   methods: {
@@ -62,30 +61,40 @@ export default {
       this.cartItemNumber++;
       this.cartTotalPrice += item.price;
     },
-    removeItem(item) {
+    removeItem(itemObj) {
       // 删除购物车中某个商品的逻辑
-      const index = this.cartList.findIndex((cartItem) => cartItem.id === item.id);
-      if (index === -1) {
-        return;
-      }
-      if (this.cartList[index].quantity <= 1) {
-        this.cartList.splice(index, 1);
-      } else {
-        this.cartList[index].quantity--;
-      }
-      this.cartItemNumber--;
-      this.cartTotalPrice -= item.price;
+      let goods_id = itemObj.goods_id || 1212
+      // const params = { goods_id }
+      this.$axios.post('/appapi/cart/goodsdel',{goods_id} )
+      .then(() => {
+        this.$message.success('添加成功')
+        
+        const params = { user_id: 10000 }
+        this.$axios.get('/appapi/cart/list',params )
+          .then(res => {
+            this.cartList = res.data.list;
+            this.cartItemNumber = res.data.list.length
+            this.cartTotalPrice = 8888
+            // this.total = res.data.total;
+          })
+          .catch(error => {
+            console.error("errorrrr:::: ", error);
+          });
+      })
+      .catch(error => {
+        console.log('xxxxx error::',error);
+      });
     },
     careateOrder(){
+      console.log('-------aaa::this.cartList:', this.cartList)
       let list = this.cartList.map((item) => {
         return {goods_id: item.goods_id, amount: item.amount}
       })
       const params = { list, user_id: 10000 }
       this.$axios.post('/appapi/order/new',params)
-        .then(res => {
+        .then(() => {
           // this.goodsList = res.data.list;
           // this.total = res.data.total;
-          res
           // console.log('------------ order/new: ', res.data)
           this.$message.success('下单成功')
         })

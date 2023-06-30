@@ -23,7 +23,10 @@ export default {
       goodsList: [],
     };
   },
-  created() {
+  created(){
+
+  },
+  activated() {
     // this.methods.handleSearch()
     const params = { }
     this.$axios.get('/appapi/goods',{ params })
