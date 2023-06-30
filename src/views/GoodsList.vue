@@ -20,26 +20,7 @@
 export default {
   data() {
     return {
-      goodsList: [
-        {
-          id: 1,
-          name: '商品一',
-          price: '10元',
-          src: 'https://placehold.it/150x150',
-        },
-        {
-          id: 2,
-          name: '商品二',
-          price: '20元',
-          src: 'https://placehold.it/150x150',
-        },
-        {
-          id: 3,
-          name: '商品三',
-          price: '30元',
-          src: 'https://placehold.it/150x150',
-        },
-      ],
+      goodsList: [],
     };
   },
   created() {
@@ -49,7 +30,6 @@ export default {
       .then(res => {
         this.goodsList = res.data.list;
         this.total = res.data.total;
-        console.log('------------ this: ', res)
       })
       .catch(error => {
         console.log("errorrrr:::: ", error);
@@ -58,8 +38,19 @@ export default {
   methods: {
     addToCart(item) {
       // 将商品添加到购物车中
-      this.$emit('add-to-cart', item);
-    },
+      console.log('-------- add to cart:', item)
+      const params = { goods_id: item.id, amount: 1, user_id: 10000 }
+      this.$axios.post('/appapi/cart/add',params)
+        .then(res => {
+          // this.goodsList = res.data.list;
+          // this.total = res.data.total;
+          console.log('------------ this: ', res.data)
+          this.$message.success('添加成功')
+        })
+        .catch(error => {
+          console.log("errorrrr:::: ", error);
+        });
+      },
   },
 };
 </script>

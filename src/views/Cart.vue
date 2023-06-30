@@ -1,7 +1,7 @@
 <template>
   <div>
-    <el-button @click="showCartDialog">{{ cartItemNumber }} 件商品 | ¥ {{ cartTotalPrice }}</el-button>
-    <el-dialog :title="'购物车（'+cartItemNumber+'件）'" :visible.sync="cartDialogVisible" width="50%">
+    <el-button @click="showCartDialog">总计： {{ cartItemNumber }} 件商品 | ¥ {{ cartTotalPrice }}</el-button>
+    <!-- <el-dialog :title="'购物车（'+cartItemNumber+'件）'" :visible.sync="cartDialogVisible" width="100%"> -->
       <el-table :data="cartList" style="width: 100%">
         <el-table-column prop="name" label="商品名称"></el-table-column>
         <el-table-column prop="price" label="单价"></el-table-column>
@@ -12,7 +12,8 @@
           </template>
         </el-table-column>
       </el-table>
-    </el-dialog>
+    <!-- </el-dialog> -->
+    <el-button type="primary" class="float-right" @click="careateOrder">去下单</el-button>
   </div>
 </template>
 
@@ -23,13 +24,31 @@ export default {
       cartList: [], // 购物车列表数据
       cartItemNumber: 0, // 购物车商品数量
       cartTotalPrice: 0, // 购物车总价
-      cartDialogVisible: false, // 购物车对话框是否可见
+      cartDialogVisible: true, // 购物车对话框是否可见
     };
+  },
+  mounted() {
+    // this.methods.handleSearch()
+    console.log("aaaa")
+    const params = { user_id: 10000 }
+    this.$axios.get('/appapi/cart/list',params )
+      .then(res => {
+        console.log("------------66---------- res:::", res)
+        this.cartList = res.data.list;
+        this.cartItemNumber = res.data.list.length
+        this.cartTotalPrice = 8888
+        // this.total = res.data.total;
+      })
+      .catch(error => {
+        console.log("errorrrr:::: ", error);
+      });
   },
   methods: {
     showCartDialog() {
       // 显示购物车对话框的逻辑
-      this.cartDialogVisible = true;
+      if(this.cartList.length > 0){
+        this.cartDialogVisible = true;
+      }
     },
     addItem(item) {
       // 向购物车添加商品的逻辑
@@ -56,6 +75,35 @@ export default {
       this.cartItemNumber--;
       this.cartTotalPrice -= item.price;
     },
-  },
+    careateOrder(){
+      let list = this.cartList.map((item) => {
+        return {goods_id: item.goods_id, amount: item.amount}
+      })
+      const params = { list, user_id: 10000 }
+      this.$axios.post('/appapi/order/new',params)
+        .then(res => {
+          // this.goodsList = res.data.list;
+          // this.total = res.data.total;
+          console.log('------------ order/new: ', res.data)
+          this.$message.success('下单成功')
+        })
+        .catch(error => {
+          console.log("errorrrr:::: ", error);
+        });
+    }
+  }
 };
+
 </script>
+
+
+<style scoped>
+.float-right {
+  float: right;
+}
+
+.el-button--primary {
+  background-color: blue;
+  border-color: blue;
+}
+</style>
