@@ -30,18 +30,7 @@ export default {
   activated() {
     // this.methods.handleSearch()
     // console.log("aaaa")
-    const params = { user_id: 10000 }
-    this.$axios.get('/appapi/cart/list',params )
-      .then(res => {
-        console.log("------------66---------- res.data.list:::", res.data.list)
-        this.cartList = res.data.list;
-        this.cartItemNumber = res.data.list.length
-        this.cartTotalPrice = 8888
-        // this.total = res.data.total;
-      })
-      .catch(error => {
-        console.error("errorrrr:::: ", error);
-      });
+    this.reloadPage()
   },
   methods: {
     showCartDialog() {
@@ -49,6 +38,19 @@ export default {
       if(this.cartList.length > 0){
         this.cartDialogVisible = true;
       }
+    },
+    reloadPage(){
+      const params = { user_id: 10000 }
+        this.$axios.get('/appapi/cart/list',params )
+          .then(res => {
+            this.cartList = res.data.list;
+            this.cartItemNumber = res.data.list.length
+            this.cartTotalPrice = 888
+            // this.total = res.data.total;
+          })
+          .catch(error => {
+            console.error("errorrrr:::: ", error);
+          });
     },
     addItem(item) {
       // 向购物车添加商品的逻辑
@@ -63,40 +65,30 @@ export default {
     },
     removeItem(itemObj) {
       // 删除购物车中某个商品的逻辑
-      let goods_id = itemObj.goods_id || 1212
+      let goods_id = itemObj.goods_id
       // const params = { goods_id }
       this.$axios.post('/appapi/cart/goodsdel',{goods_id} )
       .then(() => {
         this.$message.success('添加成功')
-        
-        const params = { user_id: 10000 }
-        this.$axios.get('/appapi/cart/list',params )
-          .then(res => {
-            this.cartList = res.data.list;
-            this.cartItemNumber = res.data.list.length
-            this.cartTotalPrice = 8888
-            // this.total = res.data.total;
-          })
-          .catch(error => {
-            console.error("errorrrr:::: ", error);
-          });
+
+        this.reloadPage()
       })
       .catch(error => {
         console.log('xxxxx error::',error);
       });
     },
     careateOrder(){
-      console.log('-------aaa::this.cartList:', this.cartList)
       let list = this.cartList.map((item) => {
         return {goods_id: item.goods_id, amount: item.amount}
       })
       const params = { list, user_id: 10000 }
-      this.$axios.post('/appapi/order/new',params)
+      this.$axios.post('/appapi/orders/new',params)
         .then(() => {
           // this.goodsList = res.data.list;
           // this.total = res.data.total;
           // console.log('------------ order/new: ', res.data)
           this.$message.success('下单成功')
+          this.reloadPage()
         })
         .catch(error => {
           error
