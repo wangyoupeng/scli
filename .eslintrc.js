@@ -9,7 +9,6 @@ module.exports = {
   ],
   rules: {
     'no-console': 'off',
-    'no-console': 'off',
     'no-debugger': 'off'
   },
   parserOptions: {

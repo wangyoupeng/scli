@@ -1,11 +1,19 @@
 <template>
   <div>
-    <el-button @click="showCartDialog">总计： {{ cartItemNumber }} 件商品 | ¥ {{ cartTotalPrice }}</el-button>
     <!-- <el-dialog :title="'购物车（'+cartItemNumber+'件）'" :visible.sync="cartDialogVisible" width="100%"> -->
-      <el-table :data="cartList" key="slot" style="width: 100%">
+      <el-table :data="cartList" key="slot" style="width: 100%" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="name" label="商品名称"></el-table-column>
         <el-table-column prop="price" label="单价"></el-table-column>
-        <el-table-column prop="quantity" label="数量"></el-table-column>
+        <el-table-column prop="quantity" label="数量" text-align="center" width="120">
+          <template slot-scope="scope">
+            <div class="quantity-container">
+            <el-button @click="handleDecrease(scope.row)" size="mini">-</el-button>
+            <span class="quantity">{{ scope.row.quantity }}</span>
+            <el-button @click="handleIncrease(scope.row)" size="mini">+</el-button>
+          </div>
+          </template>
+        </el-table-column>
         <el-table-column label="操作">
           <template  slot-scope="{ row }">
             <el-button type="danger" size="small" @click="removeItem( row )">删除</el-button>
@@ -21,18 +29,51 @@
 export default {
   data() {
     return {
-      cartList: [], // 购物车列表数据
+      cartList: [{amount: 0}], // 购物车列表数据
       cartItemNumber: 0, // 购物车商品数量
       cartTotalPrice: 0, // 购物车总价
       cartDialogVisible: true, // 购物车对话框是否可见
     };
   },
+  // mounted() {
+  //   this.$nextTick(() => {
+  //     this.tableData.forEach(row => {
+  //       this.$refs.table.toggleRowSelection(row, true);
+  //     });
+  //   });
+  // },
   activated() {
     // this.methods.handleSearch()
-    // console.log("aaaa")
+    console.log("aaaa")
     this.reloadPage()
   },
   methods: {
+    handleSelectionChange(selection) {
+      this.selectedRows = selection;
+    },
+    handleDecrease(row) {
+      console.log('row --', row)
+      if (row.quantity > 0) {
+        row.quantity--;
+        this.$axios.post('/appapi/cart/dec',{goods_id: row.id} )
+        .then(() => {
+        })
+        .catch(error => {
+          console.log('xxxxx error::',error);
+        });
+      }
+    },
+    handleIncrease(row) {
+      console.log('row ++', row)
+      row.quantity++;
+      this.$axios.post('/appapi/cart/inc',{goods_id: row.id} )
+      .then(() => {
+      })
+      .catch(error => {
+        console.log('xxxxx error::',error);
+      });
+      
+    },
     showCartDialog() {
       // 显示购物车对话框的逻辑
       if(this.cartList.length > 0){
@@ -78,8 +119,12 @@ export default {
       });
     },
     careateOrder(){
-      let list = this.cartList.map((item) => {
-        return {goods_id: item.goods_id, amount: item.amount}
+      if(this.selectedRows.length < 1){
+        this.$message.success('请选择商品 。。。')
+        return;
+      } 
+      let list = this.selectedRows.map((item) => {
+        return {goods_id: item.id, amount: item.quantity}
       })
       const params = { list, user_id: 10000 }
       this.$axios.post('/appapi/orders/new',params)
@@ -95,7 +140,8 @@ export default {
           // console.log("errorrrr:::: ", error);
 
         });
-    }
+    },
+    
   }
 };
 
@@ -103,6 +149,16 @@ export default {
 
 
 <style scoped>
+
+.quantity-container {
+  display: flex;
+  align-items: center;
+}
+
+.quantity {
+  margin: 0 10px;
+}
+
 .float-right {
   float: right;
 }
