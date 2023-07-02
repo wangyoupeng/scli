@@ -3,14 +3,14 @@
     <el-table :data="orderList" style="width: 100%">
       <el-table-column prop="id" label="订单编号"></el-table-column>
       <el-table-column prop="date" label="下单日期"></el-table-column>
-      <el-table-column label="商品列表">
+      <el-table-column label="订单列表">
         <template slot-scope="{ row }">
-          <el-tag v-for="product in row.products" :key="product.id" closable type="info">
-            {{ product.name }} x {{ product.quantity }}
+          <el-tag v-for="product in row.orderItems" :key="product.id" type="info">
+            {{ product.goods_name }} x {{ product.amount }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="totalPrice" label="订单总价"></el-table-column>
+      <el-table-column prop="price" label="订单总价"></el-table-column>
     </el-table>
     <el-pagination
       :page-size="pageSize"
@@ -46,10 +46,47 @@ export default {
     return {
       orderList: [
         //订单列表数据
+        {
+          id: 11,
+          date: "xxx",
+          totalPrice: 232,
+          orderItems:[{
+            id: 3233,
+            name:'矿泉水',
+            amount: 2,
+          },{
+            id: 3234,
+            name:'矿泉水',
+            amount: 2,
+          },{
+            id: 3235,
+            name:'矿泉水',
+            amount: 2,
+          }]
+        }
       ],
       pageSize: 10, // 分页大小
       currentPage: 1, // 当前页码
     };
   },
+  activated() {
+    // this.methods.handleSearch()
+    console.log("aaaa")
+    this.reloadPage()
+  },
+  methods: {
+    reloadPage(){
+      const params = { user_id: 10000 }
+        this.$axios.get('/appapi/orders/list',params )
+          .then(res => {
+            this.orderList = res.data.list;
+            alert(res.data.list.length)
+          })
+          .catch(error => {
+            console.error("errorrrr:::: ", error);
+          });
+    },
+  },
+  
 };
 </script>
