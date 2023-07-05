@@ -1,27 +1,37 @@
 <template>
   <div>
-    <!-- <el-dialog :title="'购物车（'+cartItemNumber+'件）'" :visible.sync="cartDialogVisible" width="100%"> -->
-      <el-table :data="cartList" key="slot" style="width: 100%" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="name" label="商品名称"></el-table-column>
-        <el-table-column prop="price" label="单价"></el-table-column>
-        <el-table-column prop="quantity" label="数量" text-align="center" width="120">
-          <template slot-scope="scope">
-            <div class="quantity-container">
-            <el-button @click="handleDecrease(scope.row)" size="mini">-</el-button>
-            <span class="quantity">{{ scope.row.quantity }}</span>
-            <el-button @click="handleIncrease(scope.row)" size="mini">+</el-button>
-          </div>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作">
-          <template  slot-scope="{ row }">
-            <el-button type="danger" size="small" @click="removeItem( row )">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    <!-- </el-dialog> -->
-    <el-button type="primary" class="float-right" @click="careateOrder(data)">去下单</el-button>
+    <el-table :data="cartList" key="slot" style="width: 100%" @selection-change="handleSelectionChange" >
+      <el-table-column type="selection" width="55">  
+      </el-table-column>
+      <el-table-column prop="name" label="商品名称"></el-table-column>
+      <el-table-column prop="price" label="单价">
+        <template slot-scope="{ row }">
+          {{ formatPrice(row.price) }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="amount" label="数量" text-align="center" width="120">
+        <template slot-scope="scope">
+          <div class="amount-container">
+          <el-button @click="handleDecrease(scope.row)" size="mini">-</el-button>
+          <span class="amount">{{ scope.row.amount }}</span>
+          <el-button @click="handleIncrease(scope.row)" size="mini">+</el-button>
+        </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作">
+        <template  slot-scope="{ row }">
+          <el-button type="danger" size="small" @click="removeItem( row )">删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <template >
+      <div class="total">
+        <template >
+          已选择 {{ cartItemNumber }} 件  共: {{ formatPrice(cartTotalPrice) }} ¥
+        </template>
+        <el-button type="primary" class="float-right" @click="careateOrder(data)">去下单</el-button>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -29,10 +39,17 @@
 export default {
   data() {
     return {
+      // {
+      //   id: item.goods_id,
+      //   name: item.name,
+      //   amount: item.amount,
+      //   imageUrl : item.image_url,
+      //   price: item.price
+      // }
       cartList: [{amount: 0}], // 购物车列表数据
+      selectedRows: [],
       cartItemNumber: 0, // 购物车商品数量
       cartTotalPrice: 0, // 购物车总价
-      cartDialogVisible: true, // 购物车对话框是否可见
     };
   },
   // mounted() {
@@ -48,15 +65,35 @@ export default {
     this.reloadPage()
   },
   methods: {
-    handleSelectionChange(selection) {
-      this.selectedRows = selection;
+    handleSelectionChange(val) {
+      // this.multipleSelection = val;
+      // alert(JSON.stringify(val))
+      // console.log("---------- val::", val)
+
+      this.selectedRows = val
+      this.sumTotal(val)
+    },
+    sumTotal(list){
+      this.cartItemNumber = list.length
+      let total = 0
+      // alert('1111__' + JSON.stringify(list))
+      list.map((i)=>{total += i.price * i.amount})
+      this.cartTotalPrice = total
     },
     handleDecrease(row) {
-      console.log('row --', row)
-      if (row.quantity > 0) {
-        row.quantity--;
+      if (row.amount > 1) {
+        row.amount--;
+        let fList = this.selectedRows.filter(i=>i.id==row.id)
+        if(fList.length > 0){
+          let newSlectRows = this.selectedRows.filter(i => (i.id != row.id))
+          newSlectRows.push(row)
+          this.selectedRows = newSlectRows
+          this.sumTotal(newSlectRows)
+        }
         this.$axios.post('/appapi/cart/dec',{goods_id: row.id} )
         .then(() => {
+          
+          
         })
         .catch(error => {
           console.log('xxxxx error::',error);
@@ -64,30 +101,30 @@ export default {
       }
     },
     handleIncrease(row) {
-      console.log('row ++', row)
-      row.quantity++;
+      row.amount++;
+      let fList = this.selectedRows.filter(i=>i.id==row.id)
+      if(fList.length > 0){
+        let newSlectRows = this.selectedRows.filter(i => (i.id != row.id))
+        newSlectRows.push(row)
+        this.selectedRows = newSlectRows
+        this.sumTotal(newSlectRows)
+      }
       this.$axios.post('/appapi/cart/inc',{goods_id: row.id} )
       .then(() => {
+        
       })
       .catch(error => {
         console.log('xxxxx error::',error);
       });
       
     },
-    showCartDialog() {
-      // 显示购物车对话框的逻辑
-      if(this.cartList.length > 0){
-        this.cartDialogVisible = true;
-      }
-    },
     reloadPage(){
       const params = { user_id: 10000 }
         this.$axios.get('/appapi/cart/list',params )
           .then(res => {
             this.cartList = res.data.list;
-            this.cartItemNumber = res.data.list.length
-            this.cartTotalPrice = 888
-            // this.total = res.data.total;
+            // this.cartItemNumber = res.data.list.length
+            this.sumTotal()
           })
           .catch(error => {
             console.error("errorrrr:::: ", error);
@@ -97,22 +134,22 @@ export default {
       // 向购物车添加商品的逻辑
       const index = this.cartList.findIndex((cartItem) => cartItem.id === item.id);
       if (index === -1) {
-        this.cartList.push({ ...item, quantity: 1 });
+        this.cartList.push({ ...item, amount: 1 });
       } else {
-        this.cartList[index].quantity++;
+        this.cartList[index].amount++;
       }
       this.cartItemNumber++;
-      this.cartTotalPrice += item.price;
+      this.cartTotalPrice += item.price*item.amount;
     },
     removeItem(itemObj) {
       // 删除购物车中某个商品的逻辑
-      let goods_id = itemObj.goods_id
-      // const params = { goods_id }
-      this.$axios.post('/appapi/cart/goodsdel',{goods_id} )
+      let id = itemObj.id
+      this.$axios.post('/appapi/cart/goodsdel',{goods_id: id} )
       .then(() => {
-        this.$message.success('添加成功')
-
-        this.reloadPage()
+        this.$message.success('删除成功')
+        this.cartList = this.cartList.filter(i => i.id != id)
+        this.selectedRows = this.selectedRows.filter(i => i.id != id)
+        this.sumTotal(this.selectedRows)
       })
       .catch(error => {
         console.log('xxxxx error::',error);
@@ -120,18 +157,15 @@ export default {
     },
     careateOrder(){
       if(this.selectedRows.length < 1){
-        this.$message.success('请选择商品 。。。')
+        alert('请选择商品 ...')
         return;
       } 
       let list = this.selectedRows.map((item) => {
-        return {goods_id: item.id, amount: item.quantity}
+        return {goods_id: item.id, amount: item.amount}
       })
       const params = { list, user_id: 10000 }
       this.$axios.post('/appapi/orders/new',params)
         .then(() => {
-          // this.goodsList = res.data.list;
-          // this.total = res.data.total;
-          // console.log('------------ order/new: ', res.data)
           this.$message.success('下单成功')
           this.reloadPage()
         })
@@ -141,21 +175,26 @@ export default {
 
         });
     },
+    formatPrice(price) { // 分转元
+      return (price / 100).toFixed(2)
+    },
+
     
   }
 };
-
 </script>
 
 
 <style scoped>
-
-.quantity-container {
+.total{
+  margin-top:30px
+}
+.amount-container {
   display: flex;
   align-items: center;
 }
 
-.quantity {
+.amount {
   margin: 0 10px;
 }
 

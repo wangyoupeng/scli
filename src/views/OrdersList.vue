@@ -80,7 +80,7 @@ export default {
         this.$axios.get('/appapi/orders/list',params )
           .then(res => {
             this.orderList = res.data.list;
-            alert(res.data.list.length)
+            // alert(res.data.list.length)
           })
           .catch(error => {
             console.error("errorrrr:::: ", error);
