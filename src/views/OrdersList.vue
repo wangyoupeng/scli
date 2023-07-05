@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div style="padding-bottom: 50px;">
     <el-table :data="orderList" style="width: 100%">
-      <el-table-column prop="id" label="订单编号"></el-table-column>
-      <el-table-column prop="date" label="下单日期"></el-table-column>
+      <el-table-column prop="id" label="订单编号" style="width: 100%"></el-table-column>
+      <el-table-column prop="created_at" label="下单时间"></el-table-column>
       <el-table-column label="订单列表">
         <template slot-scope="{ row }">
           <el-tag v-for="product in row.orderItems" :key="product.id" type="info">
@@ -10,7 +10,11 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="price" label="订单总价"></el-table-column>
+      <el-table-column prop="price" label="订单总价">
+        <template slot-scope="{ row }">
+          {{ formatPrice(row.price) }}
+        </template>
+      </el-table-column>
     </el-table>
     <el-pagination
       :page-size="pageSize"
@@ -48,8 +52,8 @@ export default {
         //订单列表数据
         {
           id: 11,
-          date: "xxx",
-          totalPrice: 232,
+          date: "",
+          price: 232,
           orderItems:[{
             id: 3233,
             name:'矿泉水',
@@ -71,7 +75,6 @@ export default {
   },
   activated() {
     // this.methods.handleSearch()
-    console.log("aaaa")
     this.reloadPage()
   },
   methods: {
@@ -85,6 +88,9 @@ export default {
           .catch(error => {
             console.error("errorrrr:::: ", error);
           });
+    },
+    formatPrice(price) { // 分转元
+      return (price / 100).toFixed(2)
     },
   },
   

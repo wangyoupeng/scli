@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-table :data="cartList" key="slot" style="width: 100%" @selection-change="handleSelectionChange" >
-      <el-table-column type="selection" width="55">  
+      <el-table-column type="selection"  width="55">  
       </el-table-column>
       <el-table-column prop="name" label="商品名称"></el-table-column>
       <el-table-column prop="price" label="单价">
@@ -52,13 +52,9 @@ export default {
       cartTotalPrice: 0, // 购物车总价
     };
   },
-  // mounted() {
-  //   this.$nextTick(() => {
-  //     this.tableData.forEach(row => {
-  //       this.$refs.table.toggleRowSelection(row, true);
-  //     });
-  //   });
-  // },
+  mounted() {
+    // this.selectedRows = this.cartList.map((i) => i);
+  },
   activated() {
     // this.methods.handleSearch()
     console.log("aaaa")
@@ -167,7 +163,8 @@ export default {
       this.$axios.post('/appapi/orders/new',params)
         .then(() => {
           this.$message.success('下单成功')
-          this.reloadPage()
+          // this.reloadPage()
+          this.$router.push("/orders")
         })
         .catch(error => {
           error
