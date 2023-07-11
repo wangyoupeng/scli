@@ -34,4 +34,7 @@ export default {
 .mobile-layout {
   height: 100%;
 }
+.main-el-footer {
+  height:100px;
+}
 </style>

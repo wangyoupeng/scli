@@ -1,23 +1,39 @@
 <template>
-  <div class="goods-list">
+  <div>
+    <Banner />
+    <div class="goods-list">
     <div class="goods-item" v-for="(item, index) in goodsList" :key="index">
-      <div class="goods-img">
-        <img :src="item.imageUrl" />
-      </div>
-      <div class="goods-info">
-        <div class="goods-name">{{ item.name }}</div>
-        <div class="goods-price">{{ (item.price / 100).toFixed(2) }} ¥ </div>
-        <div class="goods-stock">{{ item.stock }} 件</div>
-        <div class="goods-add" @click="addToCart(item)">
-          <span>加入购物车</span>
-        </div>
-      </div>
+      <el-row>
+        <el-col :span="12">
+          <div class="goods-img">
+            <img :src="item.imageUrl" />
+          </div>
+        </el-col>
+        <el-col :span="12">
+          <div class="goods-info">
+            <div class="goods-name">{{ item.name }}</div>
+            <div class="goods-price">{{ (item.price / 100).toFixed(2) }} ¥ </div>
+            <div class="goods-stock">{{ item.stock }} 件</div>
+            <div class="goods-add" @click="addToCart(item)">
+              <span>加入购物车</span>
+            </div>
+          </div>
+        </el-col>
+      </el-row>
+      
+      
     </div>
   </div>
+  </div>
+  
 </template>
 
 <script>
+import Banner from '@/components/Banner.vue';
 export default {
+  components: {
+    Banner,
+  },
   data() {
     return {
       goodsList: [],
@@ -66,10 +82,11 @@ export default {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+    margin-top: 150px;
     padding: 10px 20px;
   }
   .goods-item {
-    width: 48%;
+    width: 99%;
     margin-bottom: 20px;
     box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
     background-color: #fff;
@@ -77,6 +94,7 @@ export default {
   }
   .goods-img {
     height: 150px;
+    width: 100%;
     overflow: hidden;
   }
   .goods-img img {
@@ -85,7 +103,8 @@ export default {
     object-fit: cover;
   }
   .goods-info {
-    padding: 10px;
+    width:49%;
+    /* padding: 2px; */
     font-weight: bold;
   }
   .goods-name {
