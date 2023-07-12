@@ -27,8 +27,26 @@
           </div>
         </el-col>
         <el-col :span="19">
-          <div class="grid-content bg-purple-light goodslist">
-            商品列表
+          <div class="grid-content bg-purple-light goods-list">
+            <div class="goods-item" v-for="(item, index) in goodsList" :key="index">
+              <el-row style="margin: 10px 5px;">
+                <el-col :span="11">
+                  <div class="goods-img">
+                    <img :src="item.imageUrl" />
+                  </div>
+                </el-col>
+                <el-col :span="13">
+                  <div class="goods-info">
+                    <div class="goods-name">{{ item.name }}</div>
+                    <div class="goods-price">{{ (item.price / 100).toFixed(2) }} ¥ </div>
+                    <div class="goods-stock">{{ item.stock }} 件</div>
+                    <div class="goods-add" @click="addToCart(item)">
+                      <span>加入购物车</span>
+                    </div>
+                  </div>
+                </el-col>
+              </el-row>
+            </div>
           </div>
         </el-col>
       </div>
@@ -48,6 +66,7 @@
       return {
         activeCategory: '',
         categories: [
+          { label: '全部', value: 'all' },
           { label: '分类1', value: 'category1' },
           { label: '分类2', value: 'category2' },
           { label: '分类3', value: 'category3' },
@@ -59,7 +78,11 @@
           { label: '分类9', value: 'category9' },
           { label: '分类10', value: 'category10' },
         ],
+        goodsList: [],
       }
+    },
+    created(){
+
     },
     computed: {
       filteredProducts() {
@@ -68,6 +91,19 @@
         }
         return this.products;
       },
+    },
+    activated() {
+      // this.methods.handleSearch()
+      const params = { }
+      this.$axios.get('/appapi/goods',{ params })
+        .then(res => {
+          this.goodsList = res.data.list;
+          this.total = res.data.total;
+        })
+        .catch(error => {
+          error
+          // console.log("errorrrr:::: ", error);
+        });
     },
     methods: {
       handleCategorySelect(category) {
@@ -98,20 +134,81 @@
     border-radius: 4px;
     min-height: 36px;
   }
-
-  .groupandgoods-cont{
-    /* height: 100%; */
-  }
-  .goods-list-cont {
-    /* height: 100%; */
-  }
   .banner {
     height: 150px;
   }
+
+  .el-menu-item:focus {
+    background-color: #e5e9f2; /* 修改选中时的背景颜色 */
+  }
+
   .groupslist {
     height: 100%;
   }
-  .goodslist {
+  .goods-list {
     height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 0px 5px;
+  }
+  .goods-item {
+    width: 99%;
+    margin: 5px 0px;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+    background-color: #fff;
+    overflow: hidden;
+
+    border-radius: 10px;  /* 添加圆角效果，数字可以根据需要进行调整 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);  /* 添加阴影效果，可以根据需要进行调整 */
+  }
+  .goods-img {
+    max-width: 100%;
+    height: auto;
+    overflow: hidden;
+
+    border-radius: 10px;
+  }
+  .goods-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .goods-info {
+    width:90%;
+    height: 10px;
+    padding:10px;
+    font-weight: bold;
+    position: relative;
+  }
+  .goods-name {
+    font-size: 16px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+  }
+  .goods-price {
+    font-size: 14px;
+    color: red;
+    margin-bottom: 10px;
+    float: left;
+  }
+  .goods-stock {
+    font-size: 14px;
+    color: blue;
+    margin-bottom: 10px;
+    float: right;
+  }
+  .goods-add {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 30px;
+    background-color: #f0f0f0;
+    cursor: pointer;
+  }
+  .goods-add:hover {
+    background-color: #e0e0e0;
   }
 </style>

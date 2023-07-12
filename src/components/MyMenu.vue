@@ -1,6 +1,6 @@
 <template>
   <div class="footer-menu" v-if="isMobile">
-    <el-row :gutter="0" style="height: 60px;">
+    <el-row :gutter="0">
       <el-col
         v-for="(item, index) in menuList"
         :key="index"

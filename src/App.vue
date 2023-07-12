@@ -2,7 +2,7 @@
   <div class="mobile-layout">
     <el-container>
       <!-- 主内容区域 -->
-      <el-main>
+      <el-main style="padding:0%">
         <!-- 你的内容放在这里 -->
         <keep-alive>
           <router-view></router-view>
