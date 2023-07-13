@@ -109,6 +109,19 @@
       handleCategorySelect(category) {
         this.activeCategory = category;
       },
+      addToCart(item) {
+      // 将商品添加到购物车中
+      // console.log('-------- add to cart:', item)
+      const params = { goods_id: item.id, amount: 1, user_id: 10000 }
+      this.$axios.post('/appapi/cart/add',params)
+        .then(res => {
+          res
+          this.$message.success('添加成功')
+        })
+        .catch(error => {
+          error
+        });
+      },
     },
 
   }
@@ -198,6 +211,9 @@
     color: blue;
     margin-bottom: 10px;
     float: right;
+  }
+  .el-carousel__container {
+    height:150px;
   }
   .goods-add {
     display: flex;

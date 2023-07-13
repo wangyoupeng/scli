@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <el-table :data="cartList" key="slot" style="width: 100%" @selection-change="handleSelectionChange" >
+  <div >
+    <el-table :data="cartList" key="slot" style="width: 100%;height:90%" @selection-change="handleSelectionChange" v-if="cartItemNumber>0">
       <el-table-column type="selection" width="30%"></el-table-column>
       <el-table-column prop="imageUrl" label="图片" width="100%">
         <template slot-scope="{ row }">
@@ -31,12 +31,22 @@
       </el-table-column>
     </el-table>
     <template >
-      <div class="total">
+      <div class="total" v-if="cartItemNumber>0">
         <template >
           已选择 {{ cartItemNumber }} 件  共: {{ formatPrice(cartTotalPrice) }} ¥
         </template>
         <el-button type="primary" class="float-right" @click="careateOrder(data)">去下单</el-button>
       </div>
+    </template>
+    <template >
+        <el-card v-if="cartItemNumber<1" class="no_goods_parent">
+          <img src="http://localhost:3000/images/1689232101029_konggouwuche.png">
+          <div>
+            <p>购物车为空</p>
+            <el-button @click="jump_to('/goods')" type="primary">...去逛逛...</el-button>
+          </div>
+        </el-card>
+        
     </template>
   </div>
 </template>
@@ -181,6 +191,10 @@ export default {
     formatPrice(price) { // 分转元
       return (price / 100).toFixed(2)
     },
+    jump_to(path) {
+      // console.log('-------- jump to  ', path)
+      this.$router.push({ path })
+    },
 
     
   }
@@ -223,5 +237,17 @@ export default {
     height: 100%;
     object-fit: cover;
   }
+
+  .no_goods_parent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* 设置父元素的宽高等样式 */
+    width: 100%;
+    height: auto;
+    text-align: center;
+    border:0px;
+  }
+
 
 </style>
