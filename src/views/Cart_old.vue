@@ -1,21 +1,15 @@
 <template>
   <div>
     <el-table :data="cartList" key="slot" style="width: 100%" @selection-change="handleSelectionChange" >
-      <el-table-column type="selection" width="30%"></el-table-column>
-      <el-table-column prop="imageUrl" label="图片" width="100%">
-        <template slot-scope="{ row }">
-          <div class="goods-img">
-            <img :src="row.imageUrl" />
-          </div>
-        </template>
+      <el-table-column type="selection"  width="55">  
       </el-table-column>
-      <el-table-column prop="name" label="商品名称" width="60%"></el-table-column>
-      <el-table-column prop="price" label="单价" width="50%">
+      <el-table-column prop="name" label="商品名称"></el-table-column>
+      <el-table-column prop="price" label="单价">
         <template slot-scope="{ row }">
           {{ formatPrice(row.price) }}
         </template>
       </el-table-column>
-      <el-table-column prop="amount" label="数量" text-align="center" width="120%">
+      <el-table-column prop="amount" label="数量" text-align="center" width="120">
         <template slot-scope="scope">
           <div class="amount-container">
           <el-button @click="handleDecrease(scope.row)" size="mini">-</el-button>
@@ -24,7 +18,7 @@
         </div>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="100%">
+      <el-table-column label="操作">
         <template  slot-scope="{ row }">
           <el-button type="danger" size="small" @click="removeItem( row )">删除</el-button>
         </template>
@@ -190,8 +184,7 @@ export default {
 
 <style scoped>
 .total{
-  margin-top:30px;
-  margin-bottom:60px;
+  margin-top:30px
 }
 .amount-container {
   display: flex;
@@ -210,18 +203,4 @@ export default {
   background-color: blue;
   border-color: blue;
 }
-
-  .goods-img {
-    max-width: 100%;
-    height: auto;
-    overflow: hidden;
-
-    border-radius: 10px;
-  }
-  .goods-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
 </style>
