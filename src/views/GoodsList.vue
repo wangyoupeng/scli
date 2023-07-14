@@ -32,7 +32,7 @@
               <el-row style="margin: 10px 5px;">
                 <el-col :span="11">
                   <div class="goods-img">
-                    <img :src="item.imageUrl" />
+                    <img :src="item.imageUrl"  @error="handleImageError" />
                   </div>
                 </el-col>
                 <el-col :span="13">
@@ -65,6 +65,7 @@
     data(){
       return {
         activeCategory: '',
+        defaultImageSrc: 'http://localhost:3000/images/1689233971863_defaultimg.png',
         categories: [
           { label: '全部', value: 'all' },
           { label: '分类1', value: 'category1' },
@@ -121,6 +122,9 @@
         .catch(error => {
           error
         });
+      },
+      handleImageError(event) {
+        event.target.src = this.defaultImageSrc; // 将默认图片的 URL 赋给 src 属性
       },
     },
 

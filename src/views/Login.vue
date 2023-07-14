@@ -22,6 +22,15 @@
 </template>
 
 <script>
+  import crypto from'crypto';
+  // 加密函数
+  function encryptText(username,password) {
+    let secretKey = username + 'bawei'
+    const cipher = crypto.createCipher('aes-256-cbc', secretKey);
+    let encrypted = cipher.update(password, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    return encrypted;
+  }
 export default {
   data() {
     return {
@@ -34,7 +43,28 @@ export default {
   methods: {
     login() {
       // 在这里执行登陆逻辑
-      console.log(this.loginForm);
+      let username = this.loginForm.username
+      let pwd = this.loginForm.password
+      let pwdd = encryptText(username, pwd)
+      this.$axios.post('/api/login', {
+        username, pwd: pwdd
+      }).then((res) => {
+        if(res.data && res.data.message == "ok"){
+          if(res.data.token) localStorage.setItem('token', res.data.token)
+          if(res.data.tokenExp) localStorage.setItem('tokenExp', res.data.tokenExp)
+          if(res.data.refreshToken) localStorage.setItem('refreshToken', res.data.refreshToken)
+          if(res.data.refreshTokenExp) localStorage.setItem('refreshTokenExp', res.data.refreshTokenExp)
+          if(res.data.userInfo) localStorage.setItem('userInfo', res.data.userInfo)
+          console.log("=============== userInfo:", res.data.userInfo)
+          this.$message.success('登录成功')
+            setTimeout(() => {
+              // this.$router.go(-1) //
+              this.$router.push('/goods')
+            }, 500);
+        } else {
+          this.$message.error(res.data.message)
+        }
+      });
     },
     goToRegister() {
       // 跳转到注册页面

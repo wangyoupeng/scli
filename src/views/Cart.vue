@@ -1,11 +1,11 @@
 <template>
   <div >
-    <el-table :data="cartList" key="slot" style="width: 100%;height:90%" @selection-change="handleSelectionChange" v-if="cartItemNumber>0">
+    <el-table :data="cartList" key="slot" style="width: 100%;height:90%" @selection-change="handleSelectionChange" v-if="cartList.length>0">
       <el-table-column type="selection" width="30%"></el-table-column>
       <el-table-column prop="imageUrl" label="图片" width="100%">
         <template slot-scope="{ row }">
           <div class="goods-img">
-            <img :src="row.imageUrl" />
+            <img :src="row.imageUrl" @error="handleImageError"/>
           </div>
         </template>
       </el-table-column>
@@ -31,7 +31,7 @@
       </el-table-column>
     </el-table>
     <template >
-      <div class="total" v-if="cartItemNumber>0">
+      <div class="total" v-if="cartList.length>0">
         <template >
           已选择 {{ cartItemNumber }} 件  共: {{ formatPrice(cartTotalPrice) }} ¥
         </template>
@@ -39,7 +39,7 @@
       </div>
     </template>
     <template >
-        <el-card v-if="cartItemNumber<1" class="no_goods_parent">
+        <el-card v-if="cartList.length<1" class="no_goods_parent">
           <img src="http://localhost:3000/images/1689232101029_konggouwuche.png">
           <div>
             <p>购物车为空</p>
@@ -62,7 +62,8 @@ export default {
       //   imageUrl : item.image_url,
       //   price: item.price
       // }
-      cartList: [{amount: 0}], // 购物车列表数据
+      defaultImageSrc: 'http://localhost:3000/images/1689233971863_defaultimg.png',
+      cartList: [], // 购物车列表数据
       selectedRows: [],
       cartItemNumber: 0, // 购物车商品数量
       cartTotalPrice: 0, // 购物车总价
@@ -70,6 +71,7 @@ export default {
   },
   mounted() {
     // this.selectedRows = this.cartList.map((i) => i);
+    
   },
   activated() {
     // this.methods.handleSearch()
@@ -132,15 +134,17 @@ export default {
     },
     reloadPage(){
       const params = { user_id: 10000 }
-        this.$axios.get('/appapi/cart/list',params )
-          .then(res => {
-            this.cartList = res.data.list;
-            // this.cartItemNumber = res.data.list.length
-            this.sumTotal()
-          })
-          .catch(error => {
-            console.error("errorrrr:::: ", error);
-          });
+      this.$axios.get('/appapi/cart/list',params )
+        .then(res => {
+          // alert('::: ' + res.data.list.length)
+          // console.log("-------------- 000 res::", res)
+          this.cartList = res.data.list;
+          // this.cartItemNumber = res.data.list.length
+          this.sumTotal()
+        })
+        .catch(error => {
+          console.error("errorrrr:::: ", error);
+        });
     },
     addItem(item) {
       // 向购物车添加商品的逻辑
@@ -195,6 +199,9 @@ export default {
       // console.log('-------- jump to  ', path)
       this.$router.push({ path })
     },
+    handleImageError(events){
+      events.target.src = this.defaultImageSrc; // 将默认图片的 URL 赋给 src 属性
+    }
 
     
   }
