@@ -50,7 +50,12 @@ Axios.interceptors.request.use(
     if(request.url != "/api/login" && request.url != "/api/login" != "/api/refreshed/token"){
       checkTokenExp()
     }
-    request.headers.Authorization = `Bearer ${localStorage.getItem('token')}`;
+    let token = localStorage.getItem('token')
+    if((!token) && (request.url.indexOf("cart") > -1 || request.url.indexOf("order") > -1) ){
+      window.location.href = '/#/login'
+      return null;
+    }
+    request.headers.Authorization = `Bearer ${token}`;
     return request;
   },
   error => {

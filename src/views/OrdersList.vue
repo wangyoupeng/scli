@@ -48,28 +48,8 @@
 export default {
   data() {
     return {
-      orderList: [
-        //订单列表数据
-        {
-          id: 11,
-          date: "",
-          price: 232,
-          orderItems:[{
-            id: 3233,
-            name:'矿泉水',
-            amount: 2,
-          },{
-            id: 3234,
-            name:'矿泉水',
-            amount: 2,
-          },{
-            id: 3235,
-            name:'矿泉水',
-            amount: 2,
-          }]
-        }
-      ],
-      pageSize: 10, // 分页大小
+      orderList: [],
+      pageSize: 5, // 分页大小
       currentPage: 1, // 当前页码
     };
   },

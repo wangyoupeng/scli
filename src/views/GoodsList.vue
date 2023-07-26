@@ -12,16 +12,16 @@
         <el-col :span="5">
           <div class="grid-content bg-purple groupslist">
             <el-menu
-              :default-active="activeCategory"
-              @select="handleCategorySelect"
+              :default-active="'0'"
+              @select="handleGroupSelect"
               style="width: 100%;"
             >
               <el-menu-item style="padding:0px;"
-                v-for="(category, index) in categories"
-                :key="index"
-                :index="category.value"
+                v-for="groupItem in groupsList"
+                :key="`${groupItem.key}`"
+                :index="`${groupItem.key}`"
               >
-                {{ category.label }}
+                {{ groupItem.name }}
               </el-menu-item>
             </el-menu>
           </div>
@@ -64,21 +64,9 @@
     },
     data(){
       return {
-        activeCategory: '',
+        activeGroup: '',
         defaultImageSrc: 'http://localhost:3000/images/1689233971863_defaultimg.png',
-        categories: [
-          { label: '全部', value: 'all' },
-          { label: '分类1', value: 'category1' },
-          { label: '分类2', value: 'category2' },
-          { label: '分类3', value: 'category3' },
-          { label: '分类4', value: 'category4' },
-          { label: '分类5', value: 'category5' },
-          { label: '分类6', value: 'category6' },
-          { label: '分类7', value: 'category7' },
-          { label: '分类8', value: 'category8' },
-          { label: '分类9', value: 'category9' },
-          { label: '分类10', value: 'category10' },
-        ],
+        groupsList: [],
         goodsList: [],
       }
     },
@@ -87,8 +75,8 @@
     },
     computed: {
       filteredProducts() {
-        if (this.activeCategory) {
-          return this.products.filter(product => product.category === this.activeCategory);
+        if (this.activeGroup) {
+          return this.products.filter(product => product.group === this.activeGroup);
         }
         return this.products;
       },
@@ -99,16 +87,28 @@
       this.$axios.get('/appapi/goods',{ params })
         .then(res => {
           this.goodsList = res.data.list;
-          this.total = res.data.total;
         })
         .catch(error => {
           error
           // console.log("errorrrr:::: ", error);
         });
+
+        this.$axios.get('/appapi/groups',{ params })
+        .then(ress => {
+          this.groupsList = ress.data.list;
+        })
+        .catch(error => {
+          error
+        });
     },
     methods: {
-      handleCategorySelect(category) {
-        this.activeCategory = category;
+      handleGroupSelect(group) {
+        this.activeGroup = group;
+        const params = { group }
+        this.$axios.get('/appapi/goods',{ params })
+          .then(res => {
+            this.goodsList = res.data.list;
+          })
       },
       addToCart(item) {
       // 将商品添加到购物车中
