@@ -1,0 +1,231 @@
+<template>
+  <div class="goods-list-cont">
+    <el-row>
+      <el-col :span="24">
+        <div class="grid-content bg-purple-dark banner">
+          <Banner />
+        </div>
+      </el-col>
+    </el-row>
+    <el-row>
+      <div class="groupandgoods-cont">
+        <el-col :span="5">
+          <div class="grid-content bg-purple groupslist">
+            <el-menu
+              :default-active="'0'"
+              @select="handleGroupSelect"
+              style="width: 100%;"
+            >
+              <el-menu-item style="padding:0px;"
+                v-for="groupItem in groupsList"
+                :key="`${groupItem.key}`"
+                :index="`${groupItem.key}`"
+              >
+                {{ groupItem.name }}
+              </el-menu-item>
+            </el-menu>
+          </div>
+        </el-col>
+        <el-col :span="19">
+          <div class="grid-content bg-purple-light goods-list">
+            <div class="goods-item" v-for="(item, index) in goodsList" :key="index">
+              <el-row style="margin: 10px 5px;">
+                <el-col :span="11">
+                  <div class="goods-img">
+                    <img :src="item.imageUrl"  @error="handleImageError" />
+                  </div>
+                </el-col>
+                <el-col :span="13">
+                  <div class="goods-info">
+                    <div class="goods-name">{{ item.name }}</div>
+                    <div class="goods-name">{{ item.description }}</div>
+                    <!-- <div class="goods-price">{{ (item.price / 100).toFixed(2) }} ¥ </div>
+                    <div class="goods-stock">{{ item.stock }} 件</div> -->
+                    <div class="goods-add" @click="jump_to_detail(item)">
+                      <span>点击查看</span>
+                    </div>
+                  </div>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
+        </el-col>
+      </div>
+      
+    </el-row>
+  </div>
+  
+</template>
+
+<script>
+  import Banner from '@/components/Banner.vue';
+  export default {
+    components: {
+      Banner,
+    },
+    data(){
+      return {
+        activeGroup: '',
+        defaultImageSrc: 'http://localhost:3000/images/1689233971863_defaultimg.png',
+        groupsList: [],
+        goodsList: [],
+      }
+    },
+    created(){
+
+    },
+    computed: {
+      filteredProducts() {
+        if (this.activeGroup) {
+          return this.products.filter(product => product.group === this.activeGroup);
+        }
+        return this.products;
+      },
+    },
+    activated() {
+      // this.methods.handleSearch()
+      const params = { }
+      this.$axios.get('/appapi/spus',{ params })
+        .then(res => {
+          this.goodsList = res.data.list;
+        })
+        .catch(error => {
+          error
+          // console.log("errorrrr:::: ", error);
+        });
+
+        this.$axios.get('/appapi/groups',{ params })
+        .then(ress => {
+          this.groupsList = ress.data.list;
+        })
+        .catch(error => {
+          error
+        });
+    },
+    methods: {
+      handleGroupSelect(group) {
+        this.activeGroup = group;
+        const params = { group }
+        this.$axios.get('/appapi/goods',{ params })
+          .then(res => {
+            this.goodsList = res.data.list;
+          })
+      },
+      jump_to_detail(spuItem) {
+        this.$router.push({
+          name: "spusdetail",
+          params: {
+            spuItem
+          }
+        })
+      },
+      handleImageError(event) {
+        event.target.src = this.defaultImageSrc; // 将默认图片的 URL 赋给 src 属性
+      },
+    },
+
+  }
+</script>
+
+<style>
+  .el-row {
+    margin-bottom: 20px;
+  }
+  .el-col {
+    border-radius: 4px;
+  }
+  .bg-purple-dark {
+    background: #99a9bf;
+  }
+  .bg-purple {
+    background: #d3dce6;
+  }
+  .bg-purple-light {
+    background: #e5e9f2;
+  }
+  .grid-content {
+    border-radius: 4px;
+    min-height: 36px;
+  }
+  .banner {
+    height: 150px;
+  }
+
+  .el-menu-item:focus {
+    background-color: #e5e9f2; /* 修改选中时的背景颜色 */
+  }
+
+  .groupslist {
+    height: 100%;
+  }
+  .goods-list {
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 0px 5px;
+  }
+  .goods-item {
+    width: 99%;
+    min-height:130px;
+    margin: 5px 0px;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+    background-color: #fff;
+    overflow: hidden;
+
+    border-radius: 10px;  /* 添加圆角效果，数字可以根据需要进行调整 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);  /* 添加阴影效果，可以根据需要进行调整 */
+  }
+  .goods-img {
+    max-width: 100%;
+    height: auto;
+    overflow: hidden;
+
+    border-radius: 10px;
+  }
+  .goods-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .goods-info {
+    width:90%;
+    height: 10px;
+    padding:10px;
+    font-weight: bold;
+    position: relative;
+  }
+  .goods-name {
+    font-size: 16px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+  }
+  .goods-price {
+    font-size: 14px;
+    color: red;
+    margin-bottom: 10px;
+    float: left;
+  }
+  .goods-stock {
+    font-size: 14px;
+    color: blue;
+    margin-bottom: 10px;
+    float: right;
+  }
+  .el-carousel__container {
+    height:150px;
+  }
+  .goods-add {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 30px;
+    background-color: #f0f0f0;
+    cursor: pointer;
+  }
+  .goods-add:hover {
+    background-color: #e0e0e0;
+  }
+</style>

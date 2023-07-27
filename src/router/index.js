@@ -16,12 +16,18 @@ const routes = [
   {
     path: '/goods',
     name: 'goods',
-    component: () => import('../views/GoodsList.vue')
+    // component: () => import('../views/GoodsList.vue')
+    component: () => import('../views/SpuList.vue')
   },
   {
-    path: '/goods/detail',
-    name: 'goodsdetail',
-    component: () => import('../views/GoodsDetail.vue')
+    path: '/spus',
+    name: 'spus',
+    component: () => import('../views/SpuList.vue')
+  },
+  {
+    path: '/spus/detail',
+    name: 'spusdetail',
+    component: () => import('../views/SpuDetail.vue')
   },
   {
     path: '/login',
