@@ -81,7 +81,6 @@ export default {
   methods: {
     handleSelectionChange(val) {
       // this.multipleSelection = val;
-      // alert(JSON.stringify(val))
       // console.log("---------- val::", val)
 
       this.selectedRows = val
@@ -90,7 +89,6 @@ export default {
     sumTotal(list){
       this.cartItemNumber = list.length
       let total = 0
-      // alert('1111__' + JSON.stringify(list))
       list.map((i)=>{total += i.price * i.amount})
       this.cartTotalPrice = total
     },
@@ -110,28 +108,28 @@ export default {
             }
           }
         })
-        .catch(error => {
-          console.log('xxxxx error::',error);
+        .catch(() => {
+          that.$message.error('太频繁了,稍后尝试 ..')
         });
       }
     },
     handleIncrease(row) {
-      row.amount++;
-      let fList = this.selectedRows.filter(i=>i.id==row.id)
-      if(fList.length > 0){
-        let newSlectRows = this.selectedRows.filter(i => (i.id != row.id))
-        newSlectRows.push(row)
-        this.selectedRows = newSlectRows
-        this.sumTotal(newSlectRows)
-      }
+      let that = this
       this.$axios.post('/appapi/cart/inc',{goods_id: row.id} )
       .then((res) => {
-        console.log('xxxxx res::',res);
-        alert(JSON.stringify(res))
+        if(res && res.status == 200){
+          row.amount++;
+          let fList = that.selectedRows.filter(i=>i.id==row.id)
+          if(fList.length > 0){
+            let newSlectRows = that.selectedRows.filter(i => (i.id != row.id))
+            newSlectRows.push(row)
+            that.selectedRows = newSlectRows
+            that.sumTotal(newSlectRows)
+          }
+        }
       })
-      .catch(error => {
-        console.log('xxxxx error::',error);
-        alert(JSON.stringify(error))
+      .catch(() => {
+        that.$message.error('太频繁了,稍后尝试 ..')
       });
       
     },
@@ -139,7 +137,6 @@ export default {
       const params = { user_id: 10000 }
       this.$axios.get('/appapi/cart/list',params )
         .then(res => {
-          // alert('::: ' + res.data.list.length)
           // console.log("-------------- 000 res::", res)
           this.cartList = res.data.list;
           // this.cartItemNumber = res.data.list.length
