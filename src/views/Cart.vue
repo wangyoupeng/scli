@@ -96,18 +96,19 @@ export default {
     },
     handleDecrease(row) {
       if (row.amount > 1) {
-        row.amount--;
-        let fList = this.selectedRows.filter(i=>i.id==row.id)
-        if(fList.length > 0){
-          let newSlectRows = this.selectedRows.filter(i => (i.id != row.id))
-          newSlectRows.push(row)
-          this.selectedRows = newSlectRows
-          this.sumTotal(newSlectRows)
-        }
+        let that = this;
         this.$axios.post('/appapi/cart/dec',{goods_id: row.id} )
-        .then(() => {
-          
-          
+        .then((res) => {
+          if(res && res.status == 200){
+            row.amount--;
+            let fList = that.selectedRows.filter(i=>i.id==row.id)
+            if(fList.length > 0){
+              let newSlectRows = that.selectedRows.filter(i => (i.id != row.id))
+              newSlectRows.push(row)
+              that.selectedRows = newSlectRows
+              that.sumTotal(newSlectRows)
+            }
+          }
         })
         .catch(error => {
           console.log('xxxxx error::',error);
@@ -124,11 +125,13 @@ export default {
         this.sumTotal(newSlectRows)
       }
       this.$axios.post('/appapi/cart/inc',{goods_id: row.id} )
-      .then(() => {
-        
+      .then((res) => {
+        console.log('xxxxx res::',res);
+        alert(JSON.stringify(res))
       })
       .catch(error => {
         console.log('xxxxx error::',error);
+        alert(JSON.stringify(error))
       });
       
     },
