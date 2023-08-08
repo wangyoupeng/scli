@@ -4,7 +4,7 @@
       <el-col
         v-for="(item, index) in menuList"
         :key="index"
-        :span="8"
+        :span="6"
       >
         <div @click="jump_to(item.path)" :class="item.path === $route.path ? 'active' : ''">
           <i :class="'el-icon-' + item.icon"></i>
@@ -34,6 +34,11 @@
           {
             title: '我的订单',
             path: '/orders',
+            // icon: 'el-icon-tickts',
+          },
+          {
+            title: '联系我们',
+            path: '/aftersale',
             // icon: 'el-icon-tickts',
           }
         ],

@@ -48,6 +48,16 @@ const routes = [
     path: '/orders',
     name: 'orders',
     component: () => import('../views/OrdersList.vue')
-  }
+  },
+  {
+    path: '/chat',
+    name: 'chat',
+    component: () => import('../views/Chat.vue')
+  },
+  {
+    path: '/aftersale',
+    name: 'aftersale',
+    component: () => import('../views/AfterSale.vue')
+  },
 ]
 export default new Router({routes})
