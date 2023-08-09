@@ -38,7 +38,7 @@
           },
           {
             title: '联系我们',
-            path: '/aftersale',
+            path: '/aboutus',
             // icon: 'el-icon-tickts',
           }
         ],

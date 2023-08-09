@@ -4,6 +4,12 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
+const originalPush = Router.prototype.push
+Router.prototype.push = function push(location, onResolve, onReject) {
+  if (onResolve || onReject) return originalPush.call(this, location, onResolve, onReject)
+  return originalPush.call(this, location).catch(err => err)
+}
+
 Vue.use(Router)
 
 const routes = [
@@ -55,9 +61,9 @@ const routes = [
     component: () => import('../views/Chat.vue')
   },
   {
-    path: '/aftersale',
-    name: 'aftersale',
-    component: () => import('../views/AfterSale.vue')
+    path: '/aboutus',
+    name: 'aboutus',
+    component: () => import('../views/AboutUs.vue')
   },
 ]
 export default new Router({routes})

@@ -53,7 +53,8 @@
         <Picker :data="emojiIndex"
           :showPreview="false" 
           :showSearch="false" 
-          set="twitter" 
+          :showSkinTones="false"
+          set="google" 
           @select="showEmoji"
         />
       </div>
@@ -74,7 +75,7 @@
 </template>
 
 <script>
-import { MessageBox } from 'element-ui';
+// import { MessageBox } from 'element-ui';
 import { Picker, EmojiIndex } from "emoji-mart-vue-fast/src";
 import data from "emoji-mart-vue-fast/data/all.json";
 import 'emoji-mart-vue-fast/css/emoji-mart.css';
@@ -93,15 +94,17 @@ export default {
   },
   methods: {
     closePage() {
-      MessageBox.confirm('确认关闭页面？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$router.push('/aftersale')
-      }).catch(() => {
-        // 取消操作
-      });
+      // MessageBox.confirm('确认关闭页面？', '提示', {
+      //   confirmButtonText: '确定',
+      //   cancelButtonText: '取消',
+      //   type: 'warning'
+      // }).then(() => {
+      //   this.$router.push('/aboutus')
+      // }).catch(() => {
+      //   // 取消操作
+      // });
+
+      this.$router.push('/aboutus')
     },
     sendMessage() {
       if (this.newMessage) {

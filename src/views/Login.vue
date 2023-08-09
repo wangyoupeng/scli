@@ -22,7 +22,8 @@
 </template>
 
 <script>
-  import crypto from'crypto';
+  import crypto from 'crypto';
+  import getSocket from '../libs/socket'
   // 加密函数
   function encryptText(username,password) {
     let secretKey = username + 'bawei'
@@ -58,8 +59,11 @@ export default {
           console.log("=============== userInfo:", res.data.userInfo)
           this.$message.success('登录成功')
             setTimeout(() => {
-              // this.$router.go(-1) //
+              // 跳转
               this.$router.push('/goods')
+              // 初始化socket
+              let socket = getSocket()
+              this.$store.commit('setSocket', socket)
             }, 500);
         } else {
           this.$message.error(res.data.message)

@@ -1,6 +1,6 @@
 <template>
   <div >
-    <el-table :data="cartList" key="slot" style="width: 100%;height:90%" @selection-change="handleSelectionChange" v-if="cartList.length>0">
+    <el-table :data="cartList" key="slot" style="width: 100%;height:90%" @selection-change="handleSelectionChange" v-if="cartList && cartList.length>0">
       <el-table-column type="selection" width="30%"></el-table-column>
       <el-table-column prop="imageUrl" label="图片" width="100%">
         <template slot-scope="{ row }">
@@ -31,7 +31,7 @@
       </el-table-column>
     </el-table>
     <template >
-      <div class="total" v-if="cartList.length>0">
+      <div class="total" v-if="cartList && cartList.length>0">
         <template >
           已选择 {{ cartItemNumber }} 件  共: {{ formatPrice(cartTotalPrice) }} ¥
         </template>
@@ -39,7 +39,7 @@
       </div>
     </template>
     <template >
-        <el-card v-if="cartList.length<1" class="no_goods_parent">
+        <el-card v-if="cartList && cartList.length<1" class="no_goods_parent">
           <img src="http://localhost:3000/images/1689232101029_konggouwuche.png">
           <div>
             <p>购物车为空</p>
@@ -86,7 +86,7 @@ export default {
       this.selectedRows = val
       this.sumTotal(val)
     },
-    sumTotal(list){
+    sumTotal(list = []){
       this.cartItemNumber = list.length
       let total = 0
       list.map((i)=>{total += i.price * i.amount})
@@ -220,7 +220,7 @@ export default {
 }
 
 .amount {
-  margin: 0 10px;
+  margin: 0 5px;
 }
 
 .float-right {

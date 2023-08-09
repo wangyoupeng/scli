@@ -62,8 +62,9 @@ export default {
       const params = { user_id: 10000 }
         this.$axios.get('/appapi/orders/list',params )
           .then(res => {
-            this.orderList = res.data.list;
-            // alert(res.data.list.length)
+            if(res && res.data && res.data.list){
+              this.orderList = res.data.list;
+            }
           })
           .catch(error => {
             console.error("errorrrr:::: ", error);
