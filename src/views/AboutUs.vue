@@ -15,6 +15,7 @@
 
 <script>
 import { Card, Avatar } from 'element-ui';
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -32,22 +33,8 @@ export default {
       ]
     }
   },
-  activated() {
-    // this.$axios.get('/appapi/aboutus/list',{})
-    // .then(res => {
-    //   this.contacts = res.data.list;
-    // })
-    // .catch(error => {
-    //   error
-    //   // console.log("errorrrr:::: ", error);
-    // });
-    let that = this;
-    this.$store.state.socket.emit("init info")
-    this.$store.state.socket.on("init info",(list) => {
-      that.contacts = list
-    })
-  },
   methods: {
+    ...mapGetters(['getSocket']),
     handleContanc(conn) {
       this.$router.push({
         name: 'chat',
@@ -57,7 +44,21 @@ export default {
          }
       })
     },
-  }
+  },
+  activated() {
+    let Socket = this.getSocket()
+    let that = this;
+    if(!Socket){
+      console.log('socket not ok yet')
+    } else {
+      console.log('socket not okkkk ')
+      Socket.emit("init info")
+      Socket.on("init info",(list) => {
+        that.contacts = list
+      })
+    }
+    
+  },
 }
 </script>
 

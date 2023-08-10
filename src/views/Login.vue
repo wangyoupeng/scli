@@ -24,6 +24,7 @@
 <script>
   import crypto from 'crypto';
   import getSocket from '../libs/socket'
+  import { mapState, mapGetters, mapMutations } from 'vuex'
   // 加密函数
   function encryptText(username,password) {
     let secretKey = username + 'bawei'
@@ -41,7 +42,12 @@ export default {
       },
     };
   },
+  computed: {
+    ...mapState(['count']),  // 使用数组方式
+  },
   methods: {
+    ...mapGetters(['getSocket']),
+    ...mapMutations(['setSocket']),
     login() {
       // 在这里执行登陆逻辑
       let username = this.loginForm.username
@@ -56,15 +62,16 @@ export default {
           if(res.data.refreshToken) localStorage.setItem('refreshToken', res.data.refreshToken)
           if(res.data.refreshTokenExp) localStorage.setItem('refreshTokenExp', res.data.refreshTokenExp)
           if(res.data.userInfo) localStorage.setItem('userInfo', res.data.userInfo)
-          console.log("=============== userInfo:", res.data.userInfo)
+          console.log("userInfo:::", res.data.userInfo)
           this.$message.success('登录成功')
             setTimeout(() => {
               // 跳转
               this.$router.push('/goods')
               // 初始化socket
+              
               let socket = getSocket()
-              this.$store.commit('setSocket', socket)
-            }, 500);
+              this.setSocket(socket)
+            }, 200);
         } else {
           this.$message.error(res.data.message)
         }
