@@ -30,7 +30,7 @@ function init(){
 
 // 尝试重连的逻辑
 function reconnect(socket) {
-  const MAX_RECONNECT_ATTEMPTS = 10; // 设置最大重连次数
+  const MAX_RECONNECT_ATTEMPTS = 30; // 设置最大重连次数
   let reconnectAttempts = 0;
   const reconnectInterval = setInterval(() => {
     if (reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {

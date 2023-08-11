@@ -15,7 +15,7 @@ export default new Vuex.Store({
   },
   getters: {
     getSocket(state){
-      console.log('old socketid::', state.socket.id)
+      console.log('old socketid::', state.socket? state.socket.id:"")
       if(state.socket && state.socket.connected){
         console.log("socket connected ok")
         return state.socket

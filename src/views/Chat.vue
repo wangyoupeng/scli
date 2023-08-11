@@ -37,7 +37,7 @@
             </div>
             <div class="message_content_received_right">
                 <cite class = "web__main-user_cite" >
-                  <i style="padding-left: 15px;font-style: normal;">{{ message.date || "message.date" }}</i>
+                  <i style="padding-left: 15px;font-style: normal;">{{ message.datetime || "message.datetime" }}</i>
                 </cite>
               <div class="text">{{ message.text }}</div> 
             </div>
