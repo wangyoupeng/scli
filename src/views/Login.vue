@@ -47,7 +47,7 @@ export default {
   },
   methods: {
     ...mapGetters(['getSocket']),
-    ...mapMutations(['setSocket']),
+    ...mapMutations(['setSocket','getNewSocket']),
     login() {
       // 在这里执行登陆逻辑
       let username = this.loginForm.username
@@ -68,7 +68,6 @@ export default {
               // 跳转
               this.$router.push('/goods')
               // 初始化socket
-              
               let socket = getSocket()
               this.setSocket(socket)
             }, 200);

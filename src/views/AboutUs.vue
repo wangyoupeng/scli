@@ -15,7 +15,7 @@
 
 <script>
 import { Card, Avatar } from 'element-ui';
-import { mapGetters } from 'vuex'
+import { mapGetters,mapMutations } from 'vuex'
 
 export default {
   components: {
@@ -24,34 +24,34 @@ export default {
   },
   data() {
     return {
-      contacts: [
-        // { id: 1, name: '北京服务群', avatar: 'https://example.com/avatar1.jpg', message: '欢迎群聊沟通' },
-        // { id: 2, name: '河北服务群', avatar: 'https://example.com/avatar2.jpg', message: '欢迎群聊沟通' },
-        // { id: 3, name: 'Tom-专属客服', avatar: 'https://example.com/avatar3.jpg', message: 'just contact me!' },
-        // { id: 4, name: 'Tina-专属客服', avatar: 'https://example.com/avatar3.jpg', message: 'See you at the party!' },
-        // { id: 5, name: 'keven-专属客服', avatar: 'https://example.com/avatar3.jpg', message: 'See you at the party!' },
-      ]
+      contacts: []
     }
   },
   methods: {
     ...mapGetters(['getSocket']),
+    ...mapMutations(['getNewSocket']),
     handleContanc(conn) {
       this.$router.push({
         name: 'chat',
         query: {
-          conn_id: conn.id,
-          name: conn.name
+          id: conn.id,
+          name: conn.name,
+          type: conn.type,
+          toUserId: conn.user_id
          }
       })
     },
   },
   activated() {
     let Socket = this.getSocket()
+    if(!(Socket && Socket.connected)){
+      Socket = this.getNewSocket()
+    }
     let that = this;
     if(!Socket){
       console.log('socket not ok yet')
     } else {
-      console.log('socket not okkkk ')
+      console.log('socket ok ... ')
       Socket.emit("init info")
       Socket.on("init info",(list) => {
         that.contacts = list

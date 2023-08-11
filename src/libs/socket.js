@@ -4,7 +4,7 @@ import io from 'socket.io-client';
 function init(){
   let token = localStorage.getItem('token')
   let options = {
-    reconnectDelay: 3000,
+    reconnectDelay: 2000,
     pingInterval: 10000, // 设置心跳间隔（单位：毫秒）
     pingTimeout: 5000, // 设置心跳超时时间（单位：毫秒）
     auth:{ token }
@@ -22,10 +22,30 @@ function init(){
     console.log('Socket disconnected');
     // 断线后，尝试自动重新连接
     setTimeout(() => {
-      socket.io.open();
+      reconnect(socket)
     }, options.reconnectDelay);
   });
   return socket
+}
+
+// 尝试重连的逻辑
+function reconnect(socket) {
+  const MAX_RECONNECT_ATTEMPTS = 10; // 设置最大重连次数
+  let reconnectAttempts = 0;
+  const reconnectInterval = setInterval(() => {
+    if (reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
+      console.log('socket Max reconnect attempts reached');
+      clearInterval(reconnectInterval);
+      return;
+    }
+    reconnectAttempts++;
+    console.log(`socket Reconnecting attempt ${reconnectAttempts}`);
+    socket.connect();
+    if (socket.connected) {
+      console.log('socket Reconnected successfully');
+      clearInterval(reconnectInterval);
+    }
+  }, 2000);
 }
 
 export default init;
