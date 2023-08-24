@@ -43,20 +43,24 @@ export default {
     },
   },
   activated() {
-    let Socket = this.getSocket()
-    if(!(Socket && Socket.connected)){
-      Socket = this.getNewSocket()
-    }
-    let that = this;
-    if(!Socket){
-      console.log('socket not ok yet')
-    } else {
-      console.log('socket ok ... ')
-      Socket.emit("init info")
-      Socket.on("init info",(list) => {
-        that.contacts = list
-      })
-    }
+    this.getSocket()
+    setTimeout(()=>{
+      let Socket = this.getSocket()
+      if(!(Socket && Socket.connected)){
+        Socket = this.getNewSocket()
+      }
+      let that = this;
+      if(!Socket){
+        console.log('socket not ok yet')
+      } else {
+        console.log('socket ok ... ')
+        Socket.emit("init info")
+        Socket.on("init info",(list) => {
+          that.contacts = list
+        })
+      }
+    },500)
+    
     
   },
 }
